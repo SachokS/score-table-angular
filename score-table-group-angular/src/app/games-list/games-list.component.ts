@@ -18,18 +18,20 @@ export class GamesListComponent implements OnDestroy, OnInit {
   public _games: Game[] = [];
   public _gameName: string = "";
   private broadCastChannel = new BroadcastChannel("gameList");
+  private interval!: any;
 
   constructor(private router: Router, private cdr: ChangeDetectorRef) {
   }
 
   public ngOnInit() {
-    this._games = JSON.parse(localStorage.getItem("games") || "[]");
-
     this.broadCastChannel.onmessage = (message => {
       this._games = message.data;
-      localStorage.setItem("games", JSON.stringify(this._games));
       this.cdr.detectChanges();
     });
+
+    this.interval = setInterval(() => {
+      this.broadCastChannel.postMessage(this._games);
+    }, 10000);
   }
 
   public _createGame(): void {
@@ -38,7 +40,6 @@ export class GamesListComponent implements OnDestroy, OnInit {
       id: uuid()
     });
     this.broadCastChannel.postMessage(this._games);
-    localStorage.setItem("games", JSON.stringify(this._games));
   }
 
   public _watchGame(gameId: string): void {
@@ -50,8 +51,16 @@ export class GamesListComponent implements OnDestroy, OnInit {
     this.router.navigate([`/control-game/${gameId}`]);
   }
 
+  public _deleteGame(gameId: string): void {
+    this._games = this._games.filter(game => game.id !== gameId);
+    this.broadCastChannel.postMessage(this._games);
+    this.cdr.detectChanges();
+  }
+
   public ngOnDestroy() {
     this.broadCastChannel.close();
+    clearInterval(this.interval);
+    this.interval = null;
   }
 }
 
