@@ -1,0 +1,27 @@
+<div class="game">
+  <div class="game-container">
+    <div class="game-container__team">
+      <div class="game-container__team-name">
+        <div class="game-container__team-serving" [class.arrow-up]="firstTeamServing"></div>
+        <div>{{firstTeamName}}</div>
+      </div>
+
+
+      <div class="game-container__team-set">{{firstTeamSetScore}}</div>
+      <div *ngFor="let score of firstTeamScore" class="game-container__team-score">
+        {{score}}
+      </div>
+    </div>
+
+    <div class="game-container__team">
+      <div class="game-container__team-name">
+        <div class="game-container__team-serving" [class.arrow-up]="!firstTeamServing"></div>
+        <div id="secondTeamName">{{secondTeamName}}</div>
+      </div>
+      <div class="game-container__team-set">{{secondTeamSetScore}}</div>
+      <div *ngFor="let score of secondTeamScore" class="game-container__team-score">
+        {{score}}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<app-score-table [firstTeamName]="firstTeamName"
+                 [firstTeamScore]="firstTeamScore"
+                 [firstTeamServing]="_firstTeamServing"
+                 [firstTeamSetScore]="firstTeamSetScore"
+                 [pure]="false"
+                 [secondTeamName]="secondTeamName"
+                 [secondTeamScore]="secondTeamScore"
+                 [secondTeamSetScore]="secondTeamSetScore"
+                 [set]="set"
+></app-score-table>
+<div class="game-controls mt-3">
+  <div class="">
+    1-я команда:
+  </div>
+  <div class="form-group">
+    <label for="inputFirstTeamName">Название команды:</label>
+    <input id="inputFirstTeamName" type="text" [formControl]="firstTeamNameControl">
+
+    <div class="game-controls__team-scores">
+      <label>Счет в партиях:</label>
+
+      <button class="btn btn-secondary" (click)="_firstTeamScoreMinus()"><i class="fa fa-minus"></i></button>
+      <button class="btn btn-primary" (click)="_firstTeamScorePlus()"><i class="fa fa-plus"></i></button>
+    </div>
+  </div>
+
+  <div class="">
+    2-я команда:
+  </div>
+  <div class="form-group">
+    <label for="inputSecondTeamName">Название команды:</label>
+    <input id="inputSecondTeamName" type="text" [formControl]="secondTeamNameControl">
+
+    <div class="game-controls__team-scores">
+      <label>Счет в партиях:</label>
+      <button class="btn btn-secondary" (click)="_secondTeamScoreMinus()"><i class="fa fa-minus"></i></button>
+      <button class="btn btn-primary" (click)="_secondTeamScorePlus()"><i class="fa fa-plus"></i></button>
+    </div>
+  </div>
+
+  Кто подает:
+  <div class="form-check">
+    <input class="form-check-input" id="team1Radio" name="teamRadio" type="radio"
+           [checked]="_firstTeamServing" (change)="_firstTeamServing = true">
+    <label class="form-check-label" for="team1Radio">1-я команда</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" id="team2Radio" name="teamRadio" type="radio"
+           [checked]="!_firstTeamServing" (change)="_firstTeamServing = false">
+    <label class="form-check-label" for="team2Radio">2-я команда</label>
+  </div>
+</div>
