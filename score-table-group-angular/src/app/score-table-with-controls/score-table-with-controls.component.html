@@ -2,11 +2,11 @@
                  [firstTeamScore]="firstTeamScore"
                  [firstTeamServing]="_firstTeamServing"
                  [firstTeamSetScore]="firstTeamSetScore"
-                 [pure]="false"
                  [secondTeamName]="secondTeamName"
                  [secondTeamScore]="secondTeamScore"
                  [secondTeamSetScore]="secondTeamSetScore"
                  [set]="set"
+                 [pure]="false"
 ></app-score-table>
 <div class="game-controls mt-3">
   <div class="">
@@ -37,16 +37,18 @@
       <button class="btn btn-primary" (click)="_secondTeamScorePlus()"><i class="fa fa-plus"></i></button>
     </div>
   </div>
-
-  Кто подает:
+</div>
+Кто подает:
+<form [formGroup]="_servingForm">
   <div class="form-check">
-    <input class="form-check-input" id="team1Radio" name="teamRadio" type="radio"
-           [checked]="_firstTeamServing" (change)="_firstTeamServing = true">
+    <input class="form-check-input" formControlName="serving" id="team1Radio" name="serving"
+           type="radio" [value]="true">
     <label class="form-check-label" for="team1Radio">1-я команда</label>
   </div>
   <div class="form-check">
-    <input class="form-check-input" id="team2Radio" name="teamRadio" type="radio"
-           [checked]="!_firstTeamServing" (change)="_firstTeamServing = false">
+    <input class="form-check-input" formControlName="serving" id="team2Radio" name="serving"
+           type="radio" [value]="false">
     <label class="form-check-label" for="team2Radio">2-я команда</label>
   </div>
-</div>
+</form>
+

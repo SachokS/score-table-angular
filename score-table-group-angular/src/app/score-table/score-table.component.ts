@@ -1,5 +1,6 @@
 import {NgForOf} from "@angular/common";
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit} from "@angular/core";
+import {collection, deleteDoc, doc, Firestore, onSnapshot, query, where} from "@angular/fire/firestore";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
@@ -22,35 +23,46 @@ export class ScoreTableComponent implements OnInit, OnDestroy {
   @Input() public firstTeamServing: boolean = true;
   @Input() public pure: boolean = true;
 
-  private broadCastChanel!: BroadcastChannel;
+  firestore: Firestore = inject(Firestore);
+  private documentId: string = "";
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      console.log("Test ID:", params["id"]);
       if (this.pure) {
-        this.broadCastChanel = new BroadcastChannel("game-" + params["id"]);
-
-        this.broadCastChanel.onmessage = (message) => {
-          console.log(message.data);
-          this.firstTeamName = message.data.firstTeamName;
-          this.secondTeamName = message.data.secondTeamName;
-          this.firstTeamSetScore = message.data.firstTeamSetScore;
-          this.secondTeamSetScore = message.data.secondTeamSetScore;
-          this.firstTeamScore = message.data.firstTeamScore;
-          this.secondTeamScore = message.data.secondTeamScore;
-          this.firstTeamServing = message.data.firstTeamServing;
-          this.set = message.data.set;
-          this.cdr.detectChanges();
-        };
+        const q = query(collection(this.firestore, "live-score"),
+          where("gameId", "==", params["id"]));
+        onSnapshot(q, docsSnap => {
+          docsSnap.forEach(doc => {
+            this.documentId = doc.id;
+            const gameData = doc.data() as any;
+            this.firstTeamName = gameData.firstTeamName;
+            this.secondTeamName = gameData.secondTeamName;
+            this.firstTeamSetScore = gameData.firstTeamSetScore;
+            this.secondTeamSetScore = gameData.secondTeamSetScore;
+            this.firstTeamScore = gameData.firstTeamScore;
+            this.secondTeamScore = gameData.secondTeamScore;
+            this.firstTeamServing = gameData.firstTeamServing;
+            this.set = gameData.set;
+            this.cdr.detectChanges();
+          });
+        });
       }
     });
   }
 
   ngOnDestroy() {
-    this.broadCastChanel?.close();
+    if (this.pure) {
+      const docRef = doc(this.firestore, "live-score", this.documentId);
+      deleteDoc(docRef).then(() => {
+        console.log("Entire Document has been deleted successfully.");
+      })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }
 
 }
