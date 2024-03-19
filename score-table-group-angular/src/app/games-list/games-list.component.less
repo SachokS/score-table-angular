@@ -4,10 +4,14 @@
 }
 
 .game {
+  margin-top: 10px;
   display: flex;
   gap: 20px;
-  align-items: center;
-  padding: 10px 0;
+  align-items: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding: 10px;
+  border: 1px solid lightgray;
 
   &-name {
     min-width: 120px;
@@ -15,6 +19,7 @@
 
   &-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
   }
 }
@@ -22,4 +27,5 @@
 .game-list-create-game {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
