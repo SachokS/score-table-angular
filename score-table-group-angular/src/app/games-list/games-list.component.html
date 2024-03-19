@@ -1,7 +1,9 @@
 <div class="games-list-container">
-  <label for="inputGameName">Название игры:</label>
-  <input id="inputGameName" type="text" [(ngModel)]="_gameName">
-  <button (click)="_createGame()">Создать игру</button>
+  <div class="game-list-create-game">
+    <label for="inputGameName">Название игры:</label>
+    <input id="inputGameName" type="text" [(ngModel)]="_gameName">
+    <button (click)="_createGame()">Создать игру</button>
+  </div>
   <div class="games-list">
     <div *ngFor="let game of _games" class="game">
       <div class="game-name">{{game.name}}</div>

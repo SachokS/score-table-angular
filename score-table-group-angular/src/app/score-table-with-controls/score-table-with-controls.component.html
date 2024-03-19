@@ -1,6 +1,6 @@
 <app-score-table [firstTeamName]="firstTeamName"
                  [firstTeamScore]="firstTeamScore"
-                 [firstTeamServing]="_firstTeamServing"
+                 [firstTeamServing]="_servingForm.getRawValue().serving"
                  [firstTeamSetScore]="firstTeamSetScore"
                  [secondTeamName]="secondTeamName"
                  [secondTeamScore]="secondTeamScore"
@@ -19,8 +19,10 @@
     <div class="game-controls__team-scores">
       <label>Счет в партиях:</label>
 
-      <button class="btn btn-secondary" (click)="_firstTeamScoreMinus()"><i class="fa fa-minus"></i></button>
-      <button class="btn btn-primary" (click)="_firstTeamScorePlus()"><i class="fa fa-plus"></i></button>
+      <button class="btn btn-secondary" [disabled]="!_gameIsStarted" (click)="_firstTeamScoreMinus()"><i
+        class="fa fa-minus"></i></button>
+      <button class="btn btn-primary" [disabled]="!_gameIsStarted" (click)="_firstTeamScorePlus()"><i
+        class="fa fa-plus"></i></button>
     </div>
   </div>
 
@@ -33,22 +35,32 @@
 
     <div class="game-controls__team-scores">
       <label>Счет в партиях:</label>
-      <button class="btn btn-secondary" (click)="_secondTeamScoreMinus()"><i class="fa fa-minus"></i></button>
-      <button class="btn btn-primary" (click)="_secondTeamScorePlus()"><i class="fa fa-plus"></i></button>
+      <button class="btn btn-secondary" [disabled]="!_gameIsStarted" (click)="_secondTeamScoreMinus()"><i
+        class="fa fa-minus"></i></button>
+      <button class="btn btn-primary" [disabled]="!_gameIsStarted" (click)="_secondTeamScorePlus()"><i
+        class="fa fa-plus"></i></button>
     </div>
   </div>
+
+  Кто подает:
+  <form [formGroup]="_servingForm">
+    <div class="form-check">
+      <input class="form-check-input" formControlName="serving" id="team1Radio" name="serving"
+             type="radio" [value]="true">
+      <label class="form-check-label" for="team1Radio">1-я команда</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" formControlName="serving" id="team2Radio" name="serving"
+             type="radio" [value]="false">
+      <label class="form-check-label" for="team2Radio">2-я команда</label>
+    </div>
+  </form>
+
+  <div class="game-controls__actions">
+    <button class="btn btn-secondary" [disabled]="_gameIsStarted" (click)="_createGame()">Начать новую игру</button>
+    <button class="btn btn-primary" (click)="_endGame()">Закончить текущую игру</button>
+  </div>
+
+
 </div>
-Кто подает:
-<form [formGroup]="_servingForm">
-  <div class="form-check">
-    <input class="form-check-input" formControlName="serving" id="team1Radio" name="serving"
-           type="radio" [value]="true">
-    <label class="form-check-label" for="team1Radio">1-я команда</label>
-  </div>
-  <div class="form-check">
-    <input class="form-check-input" formControlName="serving" id="team2Radio" name="serving"
-           type="radio" [value]="false">
-    <label class="form-check-label" for="team2Radio">2-я команда</label>
-  </div>
-</form>
 

@@ -1,5 +1,5 @@
 import {Component, inject, OnInit} from "@angular/core";
-import {addDoc, collection, doc, Firestore, setDoc} from "@angular/fire/firestore";
+import {addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, setDoc, where} from "@angular/fire/firestore";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
 import {debounceTime, distinctUntilChanged, filter} from "rxjs";
@@ -24,15 +24,16 @@ export class ScoreTableWithControlsComponent implements OnInit {
   public firstTeamScore: number[] = [0];
   public secondTeamScore: number[] = [0];
   public set: number = 0;
-  public _firstTeamServing: boolean = true;
+
+  public _gameIsStarted: boolean = false;
 
   public firstTeamNameControl = new FormControl("", {nonNullable: true});
   public secondTeamNameControl = new FormControl("", {nonNullable: true});
-
   public _servingForm = new FormGroup({
-    serving: new FormControl(false, {nonNullable: true})
+    serving: new FormControl(true, {nonNullable: true})
   });
-  firestore: Firestore = inject(Firestore);
+
+  private firestore: Firestore = inject(Firestore);
   private gameId: string = "";
   private documentId: string = "";
 
@@ -42,13 +43,28 @@ export class ScoreTableWithControlsComponent implements OnInit {
   public ngOnInit() {
     this.route.params.subscribe(params => {
       this.gameId = params["id"];
-      collection(this.firestore, "live-score");
-      addDoc(collection(this.firestore, "live-score"), {
-        gameId: params["id"]
-      }).then(document => {
-        this.documentId = document.id;
+    });
+
+    const q = query(collection(this.firestore, "live-score"),
+      where("gameId", "==", this.gameId));
+    getDocs(q).then(result => {
+      result.forEach(doc => {
+        this.documentId = doc.id;
+        const gameData = doc.data() as any;
+        this.firstTeamName = gameData.firstTeamName;
+        this.secondTeamName = gameData.secondTeamName;
+        this.firstTeamSetScore = gameData.firstTeamSetScore;
+        this.secondTeamSetScore = gameData.secondTeamSetScore;
+        this.firstTeamScore = gameData.firstTeamScore;
+        this.secondTeamScore = gameData.secondTeamScore;
+        this._servingForm.patchValue({serving: gameData.firstTeamServing});
+        this.set = gameData.set;
+        this._gameIsStarted = true;
       });
     });
+
+    this.firstTeamNameControl.disable();
+    this.secondTeamNameControl.disable();
 
     this.firstTeamNameControl.valueChanges
       .pipe(filter(value => !!value),
@@ -70,12 +86,12 @@ export class ScoreTableWithControlsComponent implements OnInit {
 
     this._servingForm.valueChanges
       .subscribe((res) => {
-        this._firstTeamServing = !!res.serving;
         this.updateGameInfo();
       });
   }
 
   public _firstTeamScorePlus(): void {
+    this._servingForm.patchValue({serving: true}, {emitEvent: false});
     this.firstTeamScore[this.set]++;
     if (this.set === 5) {
       if (this.firstTeamScore[this.set] >= 15 && this.firstTeamScore[this.set] - 2 >= this.secondTeamScore[this.set]) {
@@ -100,6 +116,7 @@ export class ScoreTableWithControlsComponent implements OnInit {
   }
 
   public _secondTeamScorePlus(): void {
+    this._servingForm.patchValue({serving: false}, {emitEvent: false});
     this.secondTeamScore[this.set]++;
     if (this.set === 5) {
       if (this.secondTeamScore[this.set] >= 15 && this.secondTeamScore[this.set] - 2 >= this.firstTeamScore[this.set]) {
@@ -121,6 +138,40 @@ export class ScoreTableWithControlsComponent implements OnInit {
     this.updateGameInfo();
   }
 
+  public _createGame(): void {
+    this.firstTeamScore = [0];
+    this.secondTeamScore = [0];
+    this.set = 0;
+    this.firstTeamSetScore = 0;
+    this.secondTeamSetScore = 0;
+    this.firstTeamName = "";
+    this.secondTeamName = "";
+
+    this.firstTeamNameControl.reset("", {emitEvent: false});
+    this.secondTeamNameControl.reset("", {emitEvent: false});
+    collection(this.firestore, "live-score");
+    addDoc(collection(this.firestore, "live-score"), {
+      gameId: this.gameId
+    }).then(document => {
+      this.documentId = document.id;
+    });
+    this._gameIsStarted = true;
+    this._servingForm.reset({}, {emitEvent: false});
+    this.firstTeamNameControl.enable();
+    this.secondTeamNameControl.enable();
+  }
+
+  public _endGame(): void {
+    const docRef = doc(this.firestore, "live-score", this.documentId);
+    deleteDoc(docRef).then(() => {
+      console.log("Game is ended");
+      this._gameIsStarted = false;
+    })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   private updateGameInfo(): void {
     const docRef = doc(this.firestore, "live-score", this.documentId);
     const data = {
@@ -132,7 +183,7 @@ export class ScoreTableWithControlsComponent implements OnInit {
       secondTeamSetScore: this.secondTeamSetScore,
       secondTeamName: this.secondTeamName,
       firstTeamName: this.firstTeamName,
-      firstTeamServing: this._firstTeamServing
+      firstTeamServing: this._servingForm.getRawValue().serving
     };
 
     setDoc(docRef, data)
