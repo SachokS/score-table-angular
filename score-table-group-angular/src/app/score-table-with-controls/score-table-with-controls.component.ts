@@ -57,7 +57,7 @@ export class ScoreTableWithControlsComponent implements OnInit {
         this.secondTeamSetScore = gameData.secondTeamSetScore;
         this.firstTeamScore = gameData.firstTeamScore;
         this.secondTeamScore = gameData.secondTeamScore;
-        this._servingForm.patchValue({serving: gameData.firstTeamServing});
+        this._servingForm.patchValue({serving: gameData.firstTeamServing}, {emitEvent: false});
         this.set = gameData.set;
         this._gameIsStarted = true;
       });
@@ -65,6 +65,7 @@ export class ScoreTableWithControlsComponent implements OnInit {
 
     this.firstTeamNameControl.disable();
     this.secondTeamNameControl.disable();
+    this._servingForm.disable();
 
     this.firstTeamNameControl.valueChanges
       .pipe(filter(value => !!value),
@@ -159,6 +160,7 @@ export class ScoreTableWithControlsComponent implements OnInit {
     this._servingForm.reset({}, {emitEvent: false});
     this.firstTeamNameControl.enable();
     this.secondTeamNameControl.enable();
+    this._servingForm.enable({emitEvent: false});
   }
 
   public _endGame(): void {

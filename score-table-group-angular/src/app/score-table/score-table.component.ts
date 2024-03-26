@@ -55,13 +55,17 @@ export class ScoreTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.pure) {
-      const docRef = doc(this.firestore, "live-score", this.documentId);
-      deleteDoc(docRef).then(() => {
-        console.log("Entire Document has been deleted successfully.");
-      })
-        .catch(error => {
-          console.log(error);
-        });
+      try {
+        const docRef = doc(this.firestore, "live-score", this.documentId);
+        deleteDoc(docRef).then(() => {
+          console.log("Entire Document has been deleted successfully.");
+        })
+          .catch(error => {
+            console.log(error);
+          });
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 
