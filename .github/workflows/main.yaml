@@ -17,7 +17,6 @@ jobs:
         with:
           node-version: 20
 
-
       - name: Build Angular app to prod
         working-directory: score-table-group-angular
         run: npm install && npm run build:prod
