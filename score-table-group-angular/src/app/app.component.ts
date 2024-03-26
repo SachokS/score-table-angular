@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {RouterModule, RouterOutlet} from "@angular/router";
 import {GamesListComponent} from "./games-list/games-list.component";
 import {ScoreTableWithControlsComponent} from "./score-table-with-controls/score-table-with-controls.component";
@@ -11,6 +11,8 @@ import {ScoreTableComponent} from "./score-table/score-table.component";
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.less"
 })
-export class AppComponent {
-  title = "score-table-group-angular";
+export class AppComponent implements OnInit {
+  ngOnInit() {
+    console.log(process.env);
+  }
 }

@@ -16,6 +16,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+        run: node score-table-group-angular/prebuild.js
+        env: ${{ secrets.FIREBASE }}
+
 
       - name: Build Angular app to prod
         working-directory: score-table-group-angular
