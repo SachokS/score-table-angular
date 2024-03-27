@@ -20,6 +20,8 @@ jobs:
       - name: Build Angular app to prod
         working-directory: score-table-group-angular
         run: npm install && npm run build:prod
+        env:
+          NG_APP_FIREBASE_CONFIG: ${{ secrets.NG_APP_FIREBASE_CONFIG }}
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
