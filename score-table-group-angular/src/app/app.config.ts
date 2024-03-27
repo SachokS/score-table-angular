@@ -5,18 +5,11 @@ import {provideRouter} from "@angular/router";
 
 import {routes} from "./app.routes";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBEB-8XDdwBJXr5i8BGq3TYfb1p8LkGTHk",
-  authDomain: "score-table-2ef3b.firebaseapp.com",
-  projectId: "score-table-2ef3b",
-  storageBucket: "score-table-2ef3b.appspot.com",
-  messagingSenderId: "978527265236",
-  appId: "1:978527265236:web:cb10bc887fba7ceb2f3641"
-};
+const config = import.meta.env.NG_APP_FIREBASE_CONFIG;
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), importProvidersFrom([
-    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirebaseApp(() => initializeApp(JSON.parse(config))),
     provideFirestore(() => getFirestore()),
   ])]
 };
