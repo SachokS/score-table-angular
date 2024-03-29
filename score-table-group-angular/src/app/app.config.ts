@@ -13,6 +13,3 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
   ])]
 };
-
-console.log(config);
-console.log(import.meta.env);
