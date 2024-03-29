@@ -9,9 +9,7 @@ const config: any = import.meta.env.NG_APP_FIREBASE_CONFIG;
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), importProvidersFrom([
-    provideFirebaseApp(() => initializeApp(config)),
+    provideFirebaseApp(() => initializeApp(JSON.parse(config))),
     provideFirestore(() => getFirestore()),
   ])]
 };
-console.log("test");
-console.log("test");
