@@ -5,13 +5,13 @@ import {provideRouter} from "@angular/router";
 
 import {routes} from "./app.routes";
 
-const config = import.meta.env.NG_APP_FIREBASE_CONFIG;
+const config: any = import.meta.env.NG_APP_FIREBASE_CONFIG;
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), importProvidersFrom([
-    provideFirebaseApp(() => initializeApp(JSON.parse(config))),
+    provideFirebaseApp(() => initializeApp(config)),
     provideFirestore(() => getFirestore()),
   ])]
 };
-console.log("test1");
-console.log(config);
+console.log("test");
+console.log("test");
