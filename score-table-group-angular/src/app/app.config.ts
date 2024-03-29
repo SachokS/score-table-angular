@@ -15,3 +15,4 @@ export const appConfig: ApplicationConfig = {
 };
 
 console.log(config);
+console.log(import.meta.env);
