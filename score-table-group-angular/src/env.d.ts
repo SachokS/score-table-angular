@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly NODE_ENV: string;
   // Add your environment variables below
   NG_APP_FIREBASE_CONFIG: string;
+  NG_APP_FIREBASE: string;
 
   // readonly NG_APP_API_URL: string;
   [key: string]: any;
