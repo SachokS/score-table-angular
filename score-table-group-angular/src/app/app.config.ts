@@ -13,3 +13,5 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
   ])]
 };
+console.log("test");
+console.log(config);
